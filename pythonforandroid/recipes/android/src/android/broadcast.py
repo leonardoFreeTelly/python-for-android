@@ -19,9 +19,10 @@ class BroadcastReceiver(object):
         def onReceive(self, context, intent):
             self.callback(context, intent)
 
-    def __init__(self, callback, actions=None, categories=None):
+    def __init__(self, callback, actions=None, categories=None, broadcasterPermission=None):
         super().__init__()
         self.callback = callback
+        self.broadcasterPermission = broadcasterPermission
 
         if not actions and not categories:
             raise Exception('You need to define at least actions or categories')
@@ -62,7 +63,7 @@ class BroadcastReceiver(object):
         self.handlerthread.start()
         self.handler = Handler(self.handlerthread.getLooper())
         self.context.registerReceiver(
-            self.receiver, self.receiver_filter, None, self.handler)
+            self.receiver, self.receiver_filter, self.broadcasterPermission, self.handler)
 
     def stop(self):
         self.context.unregisterReceiver(self.receiver)
